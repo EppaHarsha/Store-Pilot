@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 antialiased;
+}
+
+@layer components {
+  .card-surface {
+    @apply rounded-2xl bg-slate-950/70 ring-1 ring-slate-800/70 shadow-[0_18px_40px_rgba(15,23,42,0.85)] backdrop-blur;
+  }
+
+  .card-soft {
+    @apply rounded-2xl bg-slate-900/80 ring-1 ring-slate-800/70 shadow-[0_16px_30px_rgba(15,23,42,0.7)];
+  }
+
+  .card-hover {
+    @apply transition-transform transition-shadow duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_22px_40px_rgba(15,23,42,0.95)];
+  }
+
+  .pill-soft {
+    @apply rounded-full px-2.5 py-0.5 text-[11px] font-medium;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-sm transition-all hover:bg-emerald-400 hover:shadow-[0_14px_35px_rgba(16,185,129,0.55)] active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-2xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-medium text-slate-100 transition-all hover:border-slate-500 hover:bg-slate-800 active:scale-[0.98];
+  }
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.6);
+  border-radius: 9999px;
+}
+
