@@ -1,87 +1,116 @@
 import type { Request, Response } from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { User } from "../models/User.js";
+import { User, type IUser } from "../models/User.js";
+import { generateToken } from "../utils/generateToken.js";
 
-const JWT_EXPIRES_IN = "7d";
+type Role = "owner" | "staff";
 
-function signToken(userId: string, email: string): string {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    throw new Error("JWT_SECRET is not configured");
-  }
-
-  return jwt.sign({ userId, email }, secret, { expiresIn: JWT_EXPIRES_IN });
+interface RegisterBody {
+  name?: string;
+  email?: string;
+  phone?: string;
+  shopName?: string;
+  password?: string;
+  role?: Role;
 }
 
-export const signupUser = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { name, email, password } = req.body ?? {};
+interface LoginBody {
+  email?: string;
+  password?: string;
+}
 
-    if (!name || !email || !password) {
-      res.status(400).json({ message: "Name, email and password are required." });
+function safeUser(user: IUser) {
+  return {
+    id: user._id.toString(),
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    shopName: user.shopName,
+    role: user.role,
+    createdAt: user.createdAt
+  };
+}
+
+export const registerUser = async (
+  req: Request<unknown, unknown, RegisterBody>,
+  res: Response
+): Promise<void> => {
+  try {
+    const { name, email, phone, shopName, password, role } = req.body ?? {};
+
+    if (!name || !email || !phone || !shopName || !password) {
+      res.status(400).json({
+        message: "name, email, phone, shopName and password are required."
+      });
       return;
     }
 
-    const existing = await User.findOne({ email: email.toLowerCase() });
+    const normalizedEmail = email.toLowerCase().trim();
+    const existing = await User.findOne({ email: normalizedEmail }).lean();
     if (existing) {
       res.status(409).json({ message: "Email is already registered." });
       return;
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     const user = await User.create({
-      name,
-      email: email.toLowerCase(),
-      password: hashedPassword
+      name: name.trim(),
+      email: normalizedEmail,
+      phone: phone.trim(),
+      shopName: shopName.trim(),
+      password,
+      role: role ?? "owner"
+    });
+
+    const token = generateToken({
+      userId: user._id.toString(),
+      email: user.email,
+      shopName: user.shopName
     });
 
     res.status(201).json({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      createdAt: user.createdAt
+      token,
+      user: safeUser(user)
     });
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error("Error in signupUser:", error);
+    console.error("Error in registerUser:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export const loginUser = async (req: Request, res: Response): Promise<void> => {
+export const loginUser = async (
+  req: Request<unknown, unknown, LoginBody>,
+  res: Response
+): Promise<void> => {
   try {
     const { email, password } = req.body ?? {};
 
     if (!email || !password) {
-      res.status(400).json({ message: "Email and password are required." });
+      res.status(400).json({ message: "email and password are required." });
       return;
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: normalizedEmail }).select("+password");
     if (!user) {
       res.status(401).json({ message: "Invalid credentials." });
       return;
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       res.status(401).json({ message: "Invalid credentials." });
       return;
     }
 
-    const token = signToken(user.id, user.email);
+    const token = generateToken({
+      userId: user._id.toString(),
+      email: user.email,
+      shopName: user.shopName
+    });
 
     res.json({
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        createdAt: user.createdAt
-      }
+      user: safeUser(user)
     });
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -92,7 +121,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
 export const getProfile = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.userId;
+    const userId = req.userId;
     if (!userId) {
       res.status(401).json({ message: "Not authorized" });
       return;
@@ -104,12 +133,7 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    res.json({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      createdAt: user.createdAt
-    });
+    res.json({ user: safeUser(user) });
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error("Error in getProfile:", error);

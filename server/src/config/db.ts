@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI;
-console.log(MONGODB_URI)
 if (!MONGODB_URI) {
   // eslint-disable-next-line no-console
   console.warn("MONGODB_URI is not set. Database connection will fail.");
@@ -20,5 +19,6 @@ export async function connectDB(): Promise<void> {
   await mongoose.connect(MONGODB_URI, {
     dbName: process.env.MONGODB_DB_NAME ?? undefined
   });
+  console.log("✅ Database connected successfully!");
 }
 

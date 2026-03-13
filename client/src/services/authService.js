@@ -2,7 +2,7 @@ import { api } from "./api.js";
 
 export const authService = {
   async signupUser(payload) {
-    const { data } = await api.post("/auth/signup", payload);
+    const { data } = await api.post("/auth/register", payload);
     return data;
   },
 

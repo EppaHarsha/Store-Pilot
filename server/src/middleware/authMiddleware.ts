@@ -4,11 +4,12 @@ import jwt from "jsonwebtoken";
 interface JwtPayload {
   userId: string;
   email: string;
+  shopName: string;
 }
 
 declare module "express-serve-static-core" {
   interface Request {
-    user?: JwtPayload;
+    userId?: string;
   }
 }
 
@@ -27,7 +28,7 @@ export const protect = (req: Request, res: Response, next: NextFunction): void =
       throw new Error("JWT_SECRET is not configured");
     }
     const decoded = jwt.verify(token, secret) as JwtPayload;
-    req.user = decoded;
+    req.userId = decoded.userId;
     next();
   } catch (error) {
     res.status(401).json({ message: "Not authorized, token failed" });

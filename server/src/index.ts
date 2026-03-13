@@ -1,11 +1,14 @@
 import "dotenv/config";
 
 import cors from "cors";
-import express, { type ErrorRequestHandler } from "express";
+import express from "express";
 import morgan from "morgan";
 
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
+import { errorMiddleware } from "./middleware/errorMiddleware.js";
+import { scheduleDailySummary } from "./jobs/dailySummary.js";
 
 const PORT = Number(process.env.PORT ?? 3001);
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ?? "http://localhost:5173";
@@ -37,27 +40,20 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.use("/api", (_req, res) => {
   res.status(404).json({ error: "Not found" });
 });
 
-const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-  const status = typeof err?.status === "number" ? err.status : 500;
-
-  const message =
-    status >= 500
-      ? "Internal Server Error"
-      : String(err?.message ?? "Error");
-
-  res.status(status).json({ error: message });
-};
-
-app.use(errorHandler);
+app.use(errorMiddleware);
 
 async function start(): Promise<void> {
   try {
     await connectDB();
+
+    // Start cron jobs
+    scheduleDailySummary();
 
     app.listen(PORT, () => {
       console.log(`Server listening on http://localhost:${PORT}`);

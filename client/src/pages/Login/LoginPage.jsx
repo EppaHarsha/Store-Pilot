@@ -6,8 +6,8 @@ import { authService } from "../../services/authService.js";
 const LoginPage = () => {
   const { isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
-  const [shopName, setShopName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -17,12 +17,12 @@ const LoginPage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!shopName || !phone) return;
+    if (!email || !password) return;
     setSubmitting(true);
     setError("");
 
     authService
-      .loginUser({ email: phone, password: shopName })
+      .loginUser({ email, password })
       .then((data) => {
         const { token, user } = data;
         if (!token || !user) {
@@ -72,8 +72,8 @@ const LoginPage = () => {
               className="input-base"
               type="email"
               placeholder="you@example.com"
-              value={shopName}
-              onChange={(e) => setShopName(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="space-y-1.5">
@@ -84,8 +84,8 @@ const LoginPage = () => {
               className="input-base"
               type="password"
               placeholder="••••••••"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           {error && (
@@ -95,7 +95,7 @@ const LoginPage = () => {
           )}
           <button
             type="submit"
-            disabled={submitting || !shopName || !phone}
+            disabled={submitting || !email || !password}
             className="btn-primary mt-2 w-full disabled:cursor-not-allowed disabled:opacity-70"
           >
             {submitting ? "Logging in..." : "Login"}

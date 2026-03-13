@@ -6,6 +6,8 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [shopName, setShopName] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -13,13 +15,13 @@ const SignupPage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!name || !email || !password) return;
+    if (!name || !email || !phone || !shopName || !password) return;
     setSubmitting(true);
     setError("");
     setSuccess("");
 
     authService
-      .signupUser({ name, email, password })
+      .signupUser({ name, email, phone, shopName, password })
       .then(() => {
         setSuccess("Account created successfully. You can now log in.");
         setTimeout(() => navigate("/login", { replace: true }), 600);
@@ -70,6 +72,25 @@ const SignupPage = () => {
             />
           </div>
           <div className="space-y-1.5">
+            <label className="text-xs font-medium text-slate-700">Phone</label>
+            <input
+              className="input-base"
+              type="tel"
+              placeholder="10-digit mobile"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-slate-700">Shop Name</label>
+            <input
+              className="input-base"
+              placeholder="Sai Tailors"
+              value={shopName}
+              onChange={(e) => setShopName(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1.5">
             <label className="text-xs font-medium text-slate-700">Password</label>
             <input
               className="input-base"
@@ -94,7 +115,7 @@ const SignupPage = () => {
 
           <button
             type="submit"
-            disabled={submitting || !name || !email || !password}
+            disabled={submitting || !name || !email || !phone || !shopName || !password}
             className="btn-primary mt-2 w-full disabled:cursor-not-allowed disabled:opacity-70"
           >
             {submitting ? "Creating account..." : "Sign up"}

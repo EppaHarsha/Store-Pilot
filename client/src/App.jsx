@@ -16,9 +16,10 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+      <Route path="/landing" element={<LandingPage />} />
 
       <Route
         path="/dashboard"
@@ -92,7 +93,7 @@ const App = () => {
         }
       />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 };
