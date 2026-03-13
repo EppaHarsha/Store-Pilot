@@ -1,0 +1,91 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "orders": "Orders",
+    "customers": "Customers",
+    "payments": "Payments",
+    "newOrder": "New Order",
+    "settings": "Settings",
+    "logout": "Logout",
+    "home": "Home",
+    "add": "Add",
+    "clients": "Clients",
+    "brandTagline": "Vyapari AI"
+  },
+  "dashboard": {
+    "title": "Store Dashboard",
+    "totalOrders": "Total Orders",
+    "todaysOrders": "Today's Orders",
+    "pendingPayments": "Pending Payments",
+    "overdueOrders": "Overdue Orders"
+  },
+  "orders": {
+    "title": "Orders",
+    "emptyTitle": "No orders yet",
+    "emptyDesc": "New orders will appear here as you create them from the New Order screen.",
+    "total": "Total",
+    "pending": "Pending",
+    "markPaid": "Mark Paid",
+    "fullyPaid": "Fully Paid",
+    "noDate": "No Date"
+  },
+  "status": {
+    "received": "Received",
+    "inProgress": "In Progress",
+    "ready": "Ready",
+    "delivered": "Delivered"
+  },
+  "newOrder": {
+    "title": "New Order",
+    "subtitle": "Create a new customer order and register payment details.",
+    "section1": "Customer Details",
+    "section2": "Order Information",
+    "section3": "Payment & Pricing",
+    "customerName": "Customer Name",
+    "customerNamePlaceholder": "e.g. Ramesh Kumar",
+    "phone": "Phone Number",
+    "phonePlaceholder": "10-digit mobile",
+    "description": "Description",
+    "descriptionPlaceholder": "e.g. Pant stitching, ready by Monday evening...",
+    "deliveryDate": "Delivery Date",
+    "photo": "Reference Photo",
+    "totalAmount": "Total Amount",
+    "advancePaid": "Advance Paid",
+    "balance": "Balance to collect",
+    "save": "Save Order",
+    "validationError": "Please fill customer name, phone and order description.",
+    "successMsg": "Order saved successfully",
+    "errorMsg": "Could not save order"
+  },
+  "customers": {
+    "title": "Customers",
+    "searchPlaceholder": "Search by name or phone...",
+    "emptyTitle": "No customers found",
+    "emptyDesc": "Try a different name or phone number, or add a new customer from the order flow.",
+    "orders": "Orders",
+    "spent": "Spent",
+    "pendingLabel": "Pending",
+    "noPhone": "No phone",
+    "callCustomer": "Call Customer"
+  },
+  "payments": {
+    "title": "Payments",
+    "sortBy": "Sort by",
+    "sortAmount": "Amount",
+    "sortDays": "Overdue days",
+    "emptyTitle": "No pending payments",
+    "emptyDesc": "Great! You have no pending balances. New dues will appear here automatically.",
+    "errorMsg": "Could not load pending payments."
+  },
+  "settings": {
+    "title": "Settings",
+    "placeholder": "This is a placeholder settings page for Store Pilot.",
+    "hint": "In a full version, you can add shop details, GST, notification preferences, and backup options here."
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "hi": "हिंदी",
+    "te": "తెలుగు"
+  }
+}

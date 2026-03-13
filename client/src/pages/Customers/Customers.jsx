@@ -7,8 +7,10 @@ import Skeleton from "../../components/ui/Skeleton.jsx";
 import EmptyState from "../../components/ui/EmptyState.jsx";
 import { customersService } from "../../services/customersService.js";
 import { useToast } from "../../components/ui/ToastProvider.jsx";
+import { useTranslation } from "react-i18next";
 
 const Customers = () => {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 400);
   const [customers, setCustomers] = useState([]);
@@ -23,7 +25,7 @@ const Customers = () => {
         if (isMounted) setCustomers(data || []);
       } catch (error) {
         console.error(error);
-        if (isMounted) showError("Could not load customers.");
+        if (isMounted) showError(t("customers.emptyTitle"));
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -31,16 +33,16 @@ const Customers = () => {
     return () => {
       isMounted = false;
     };
-  }, [debouncedQuery, showError]);
+  }, [debouncedQuery, showError, t]);
 
   const filtered = useMemo(() => customers, [customers]);
 
   return (
-    <PageContainer title="Customers">
+    <PageContainer title={t("customers.title")}>
       <SearchBar
         value={query}
         onChange={setQuery}
-        placeholder="Search by name or phone..."
+        placeholder={t("customers.searchPlaceholder")}
       />
       <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {loading &&
@@ -50,8 +52,8 @@ const Customers = () => {
 
         {!loading && filtered.length === 0 && (
           <EmptyState
-            title="No customers found"
-            description="Try a different name or phone number, or add a new customer from the order flow."
+            title={t("customers.emptyTitle")}
+            description={t("customers.emptyDesc")}
           />
         )}
 
@@ -65,4 +67,3 @@ const Customers = () => {
 };
 
 export default Customers;
-

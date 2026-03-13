@@ -8,8 +8,6 @@ import Payments from "./pages/Payments/Payments.jsx";
 import NewOrder from "./pages/Orders/NewOrder.jsx";
 import Settings from "./pages/Settings/Settings.jsx";
 import LandingPage from "./pages/LandingPage/LandingPage.jsx";
-import LoginPage from "./pages/Login/LoginPage.jsx";
-import SignupPage from "./pages/Signup/SignupPage.jsx";
 import ProfilePage from "./pages/Profile/ProfilePage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
@@ -17,8 +15,6 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
 
       <Route
         path="/dashboard"

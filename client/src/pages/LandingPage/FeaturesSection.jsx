@@ -7,19 +7,19 @@ const features = [
     icon: HiOutlineSparkles,
     title: "All-in-one store cockpit",
     description:
-      "Track orders, payments, and customers in a single view designed for busy local businesses."
+      "Track your latest orders, follow up on payments, and organize your customer base with a beautifully simple dashboard powered by AI."
   },
   {
     icon: HiOutlineClock,
     title: "Never miss a due date",
     description:
-      "See overdue payments at a glance and follow up before cash slips through the cracks."
+      "Daily automated WhatsApp reminders keep you informed about what's due today, ensuring no payment slips through the cracks."
   },
   {
     icon: HiOutlineDevicePhoneMobile,
     title: "Works on any device",
     description:
-      "Optimized for mobile, tablet, and desktop so you can run your shop from wherever you are."
+      "Whether you are at your desk or running your shop, access your business data seamlessly from any device, anywhere."
   }
 ];
 
@@ -56,7 +56,7 @@ const FeaturesSection = () => {
             Everything your shop needs, in one place.
           </h2>
           <p className="mt-2 text-sm text-slate-600">
-            Store Pilot brings structure to daily chaos — from new orders to overdue payments.
+            Vyapari AI works quietly in the background to bring structure to your daily workflow.
           </p>
         </motion.div>
 

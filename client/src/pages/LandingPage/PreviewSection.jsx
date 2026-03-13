@@ -25,10 +25,10 @@ const PreviewSection = () => {
               The interface you see below is exactly what you&apos;ll use after logging in.
             </p>
             <Link
-              to="/login"
+              to="/dashboard"
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800"
             >
-              Go to login
+              Go to dashboard
             </Link>
           </motion.div>
 

@@ -1,13 +1,26 @@
 import React from "react";
 
-const steps = ["Received", "In Progress", "Ready", "Delivered"];
+const steps = ["received", "inProgress", "ready", "delivered"];
+
+import { useTranslation } from "react-i18next";
 
 const StatusStepper = ({ status, onChange }) => {
-  const currentIndex = steps.indexOf(status);
+  const { t } = useTranslation();
+
+  // Map stored values to translation keys (stored as English label, map to key)
+  const stepLabelMap = {
+    "Received": "status.received",
+    "In Progress": "status.inProgress",
+    "Ready": "status.ready",
+    "Delivered": "status.delivered",
+  };
+
+  const stepValues = ["Received", "In Progress", "Ready", "Delivered"];
+  const currentIndex = stepValues.indexOf(status);
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs">
-      {steps.map((step, index) => {
+      {stepValues.map((step, index) => {
         const isCompleted = index <= currentIndex;
         return (
           <button
@@ -15,10 +28,10 @@ const StatusStepper = ({ status, onChange }) => {
             type="button"
             onClick={() => onChange(step)}
             className={[
-              "flex items-center gap-1 rounded-full px-2.5 py-1 border",
+              "flex items-center gap-1 rounded-full px-2.5 py-1 border transition-colors",
               isCompleted
                 ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                : "border-slate-200 bg-white text-slate-600"
+                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
             ].join(" ")}
           >
             <span
@@ -27,7 +40,7 @@ const StatusStepper = ({ status, onChange }) => {
                 isCompleted ? "bg-emerald-600" : "bg-slate-400"
               ].join(" ")}
             />
-            <span>{step}</span>
+            <span>{t(stepLabelMap[step])}</span>
           </button>
         );
       })}
@@ -36,4 +49,3 @@ const StatusStepper = ({ status, onChange }) => {
 };
 
 export default StatusStepper;
-

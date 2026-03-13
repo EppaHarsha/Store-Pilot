@@ -22,7 +22,7 @@ const HeroSection = () => {
             className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 shadow-sm"
           >
             <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            <span>Built for busy shop owners</span>
+            <span>Your AI partner for local business</span>
           </motion.div>
 
           <motion.h1
@@ -31,9 +31,9 @@ const HeroSection = () => {
             transition={{ delay: 0.15, duration: 0.45 }}
             className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl"
           >
-            Run your{" "}
+            Manage your{" "}
             <span className="bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent">
-              store on autopilot
+              business effortlessly
             </span>
             .
           </motion.h1>
@@ -44,9 +44,7 @@ const HeroSection = () => {
             transition={{ delay: 0.22, duration: 0.45 }}
             className="max-w-lg text-sm leading-relaxed text-slate-600 sm:text-base"
           >
-            Store Pilot keeps orders, customers, and payments organized in one
-            clean dashboard — so you can focus on serving customers, not
-            managing notebooks and WhatsApp chats.
+            Vyapari AI acts as your personal digital assistant. From managing daily orders and sending automated WhatsApp reminders to tracking customer dues—everything is handled smartly so you can focus on growing your business.
           </motion.p>
 
           <motion.div
@@ -56,13 +54,13 @@ const HeroSection = () => {
             className="flex flex-wrap items-center gap-3"
           >
             <Link
-              to="/login"
+              to="/dashboard"
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800"
             >
               Get Started
             </Link>
             <Link
-              to="/login"
+              to="/dashboard"
               className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
             >
               Login
@@ -120,8 +118,7 @@ const HeroSection = () => {
                 </div>
               </div>
               <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-3 text-[11px] text-slate-600">
-                &ldquo;Store Pilot replaced my diary, calculator, and three
-                WhatsApp groups. Now I can tell what I&apos;m owed in seconds.&rdquo;
+                &ldquo;Before Vyapari AI, I relied on notes and scattered WhatsApp messages. Now my daily summaries keep me updated without lifting a finger.&rdquo;
               </div>
             </div>
           </div>

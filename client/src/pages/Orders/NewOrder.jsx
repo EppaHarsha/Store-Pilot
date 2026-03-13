@@ -2,8 +2,16 @@ import React, { useMemo, useState } from "react";
 import { HiOutlineCalendarDays, HiOutlineCurrencyRupee, HiOutlineUser } from "react-icons/hi2";
 import VoiceButton from "../../components/shared/VoiceButton.jsx";
 import PhotoUpload from "../../components/shared/PhotoUpload.jsx";
+import { useToast } from "../../components/ui/ToastProvider.jsx";
+import { ordersService } from "../../services/ordersService.js";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const NewOrder = () => {
+  const navigate = useNavigate();
+  const { showSuccess, showError } = useToast();
+  const { t } = useTranslation();
+
   const [form, setForm] = useState({
     customerName: "",
     phone: "",
@@ -25,136 +33,180 @@ const NewOrder = () => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // basic validation
     if (!form.customerName || !form.phone || !form.description) {
-      alert("Please fill customer name, phone and order description.");
+      alert(t("newOrder.validationError"));
       return;
     }
-    // TODO: send to backend
-    alert("Order saved (demo).");
+    try {
+      await ordersService.createOrder({
+        customerName: form.customerName,
+        phone: form.phone,
+        description: form.description,
+        deliveryDate: form.deliveryDate || undefined,
+        totalAmount: Number(form.totalAmount) || 0,
+        advancePaid: Number(form.advancePaid) || 0
+      });
+      showSuccess(t("newOrder.successMsg"));
+      navigate("/orders");
+    } catch (err) {
+      console.error(err);
+      showError(t("newOrder.errorMsg"));
+    }
   };
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-slate-900">New Order</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="card-soft space-y-4 p-4"
-      >
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-700">Customer Name</label>
-            <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus-within:ring-4 focus-within:ring-slate-100">
-              <HiOutlineUser className="h-4 w-4 text-slate-400" />
-              <input
-                className="h-8 w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
-                placeholder="Ramesh"
-                value={form.customerName}
-                onChange={(e) => handleChange("customerName", e.target.value)}
-              />
+    <div className="space-y-6 max-w-3xl mx-auto pb-8">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("newOrder.title")}</h1>
+        <p className="text-sm text-slate-500 mt-1">{t("newOrder.subtitle")}</p>
+      </div>
+      
+      <form onSubmit={handleSubmit} className="space-y-6">
+        
+        {/* Customer Details Section */}
+        <div className="card-soft overflow-hidden">
+          <div className="bg-slate-50/80 px-5 py-3 border-b border-slate-100 flex items-center gap-2">
+             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold">1</span>
+             <h2 className="text-sm font-semibold text-slate-800">{t("newOrder.section1")}</h2>
+          </div>
+          <div className="p-5 grid gap-5 sm:grid-cols-2">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("newOrder.customerName")}</label>
+              <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-1 shadow-sm focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-50 transition-all">
+                <HiOutlineUser className="h-5 w-5 text-slate-400" />
+                <input
+                  className="h-12 w-full bg-transparent text-base text-slate-900 outline-none placeholder:text-slate-300"
+                  placeholder={t("newOrder.customerNamePlaceholder")}
+                  value={form.customerName}
+                  onChange={(e) => handleChange("customerName", e.target.value)}
+                />
+              </div>
             </div>
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-700">Phone Number</label>
-            <input
-              className="input-base"
-              placeholder="10-digit mobile"
-              value={form.phone}
-              onChange={(e) => handleChange("phone", e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-xs font-medium text-slate-700">Order Description</label>
-          <div className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus-within:ring-4 focus-within:ring-slate-100">
-            <textarea
-              rows={3}
-              className="w-full resize-none bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
-              placeholder="Pant stitching Monday, advance 500..."
-              value={form.description}
-              onChange={(e) => handleChange("description", e.target.value)}
-            />
-            <div className="flex justify-end">
-              <VoiceButton
-                onTranscript={(text) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    description: prev.description
-                      ? `${prev.description} ${text}`
-                      : text
-                  }))
-                }
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("newOrder.phone")}</label>
+              <input
+                className="h-14 w-full rounded-xl border border-slate-200 bg-white px-4 text-base text-slate-900 shadow-sm outline-none placeholder:text-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 transition-all"
+                placeholder={t("newOrder.phonePlaceholder")}
+                value={form.phone}
+                onChange={(e) => handleChange("phone", e.target.value)}
               />
             </div>
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3">
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-700">Delivery Date</label>
-            <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus-within:ring-4 focus-within:ring-slate-100">
-              <HiOutlineCalendarDays className="h-4 w-4 text-slate-400" />
-              <input
-                type="date"
-                className="h-8 w-full bg-transparent text-sm text-slate-900 outline-none"
-                value={form.deliveryDate}
-                onChange={(e) => handleChange("deliveryDate", e.target.value)}
-              />
-            </div>
+        {/* Order Details Section */}
+        <div className="card-soft overflow-hidden">
+          <div className="bg-slate-50/80 px-5 py-3 border-b border-slate-100 flex items-center gap-2">
+             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold">2</span>
+             <h2 className="text-sm font-semibold text-slate-800">{t("newOrder.section2")}</h2>
           </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-700">Total Amount</label>
-            <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus-within:ring-4 focus-within:ring-slate-100">
-              <HiOutlineCurrencyRupee className="h-4 w-4 text-slate-400" />
-              <input
-                type="number"
-                className="h-8 w-full bg-transparent text-sm text-slate-900 outline-none"
-                placeholder="0"
-                value={form.totalAmount}
-                onChange={(e) => handleChange("totalAmount", e.target.value)}
-              />
+          <div className="p-5 space-y-5">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("newOrder.description")}</label>
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-50 transition-all">
+                <textarea
+                  rows={3}
+                  className="w-full resize-none bg-transparent text-base text-slate-900 outline-none placeholder:text-slate-300"
+                  placeholder={t("newOrder.descriptionPlaceholder")}
+                  value={form.description}
+                  onChange={(e) => handleChange("description", e.target.value)}
+                />
+                <div className="flex justify-end pt-2 border-t border-slate-50">
+                  <VoiceButton
+                    onTranscript={(text) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        description: prev.description
+                          ? `${prev.description} ${text}`
+                          : text
+                      }))
+                    }
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-700">Advance Paid</label>
-            <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus-within:ring-4 focus-within:ring-slate-100">
-              <HiOutlineCurrencyRupee className="h-4 w-4 text-slate-400" />
-              <input
-                type="number"
-                className="h-8 w-full bg-transparent text-sm text-slate-900 outline-none"
-                placeholder="0"
-                value={form.advancePaid}
-                onChange={(e) => handleChange("advancePaid", e.target.value)}
-              />
+            
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("newOrder.deliveryDate")}</label>
+                <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-1 shadow-sm focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-50 transition-all">
+                  <HiOutlineCalendarDays className="h-5 w-5 text-slate-400" />
+                  <input
+                    type="date"
+                    className="h-12 w-full bg-transparent text-base text-slate-900 outline-none"
+                    value={form.deliveryDate}
+                    onChange={(e) => handleChange("deliveryDate", e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("newOrder.photo")}</label>
+                <div className="px-1">
+                  <PhotoUpload onChange={setPhoto} />
+                  {photo && (
+                    <p className="mt-2 text-xs text-slate-500 font-medium">
+                      Selected: {photo.name} ({Math.round(photo.size / 1024)} KB)
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
-          <span className="text-slate-700">Balance to collect</span>
-          <span className="text-lg font-semibold text-emerald-700">
-            ₹{balance}
-          </span>
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-xs font-medium text-slate-700">Photo</label>
-          <PhotoUpload onChange={setPhoto} />
-          {photo && (
-            <p className="text-[11px] text-slate-500">
-              Selected: {photo.name} ({Math.round(photo.size / 1024)} KB)
-            </p>
-          )}
+        {/* Payment Section */}
+        <div className="card-soft overflow-hidden">
+          <div className="bg-slate-50/80 px-5 py-3 border-b border-slate-100 flex items-center gap-2">
+             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold">3</span>
+             <h2 className="text-sm font-semibold text-slate-800">{t("newOrder.section3")}</h2>
+          </div>
+          <div className="p-5">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("newOrder.totalAmount")}</label>
+                <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-1 shadow-sm focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-50 transition-all">
+                  <HiOutlineCurrencyRupee className="h-5 w-5 text-slate-400" />
+                  <input
+                    type="number"
+                    className="h-12 w-full bg-transparent text-lg font-medium text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-300"
+                    placeholder="0"
+                    value={form.totalAmount}
+                    onChange={(e) => handleChange("totalAmount", e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("newOrder.advancePaid")}</label>
+                <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-1 shadow-sm focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-50 transition-all">
+                  <HiOutlineCurrencyRupee className="h-5 w-5 text-slate-400" />
+                  <input
+                    type="number"
+                    className="h-12 w-full bg-transparent text-lg font-medium text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-300"
+                    placeholder="0"
+                    value={form.advancePaid}
+                    onChange={(e) => handleChange("advancePaid", e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-6 flex items-center justify-between rounded-xl border border-emerald-100 bg-emerald-50/50 px-5 py-4">
+              <span className="font-semibold text-emerald-900">{t("newOrder.balance")}</span>
+              <span className="text-2xl font-bold tracking-tight text-emerald-700">
+                ₹{balance}
+              </span>
+            </div>
+          </div>
         </div>
 
         <button
           type="submit"
-          className="btn-primary mt-2 h-11 w-full"
+          className="mt-6 flex h-14 w-full items-center justify-center rounded-xl bg-slate-900 text-base font-bold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-slate-800 active:scale-[0.98]"
         >
-          Save Order
+          {t("newOrder.save")}
         </button>
       </form>
     </div>
@@ -162,4 +214,3 @@ const NewOrder = () => {
 };
 
 export default NewOrder;
-

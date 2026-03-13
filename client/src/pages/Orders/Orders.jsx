@@ -5,10 +5,13 @@ import Skeleton from "../../components/ui/Skeleton.jsx";
 import EmptyState from "../../components/ui/EmptyState.jsx";
 import { ordersService } from "../../services/ordersService.js";
 import { useToast } from "../../components/ui/ToastProvider.jsx";
+import { useTranslation } from "react-i18next";
+import { AnimatePresence } from "framer-motion";
 
 const skeletons = Array.from({ length: 3 });
 
 const Orders = () => {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const { showError } = useToast();
@@ -18,10 +21,13 @@ const Orders = () => {
     (async () => {
       try {
         const data = await ordersService.getOrders();
-        if (isMounted) setOrders(data || []);
+        if (isMounted) {
+          // Show orders that still have balance (unpaid) first, paid go to end
+          setOrders(data || []);
+        }
       } catch (error) {
         console.error(error);
-        if (isMounted) showError("Could not load orders. Please try again.");
+        if (isMounted) showError(t("orders.emptyTitle"));
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -29,29 +35,56 @@ const Orders = () => {
     return () => {
       isMounted = false;
     };
-  }, [showError]);
+  }, [showError, t]);
+
+  // When an order is marked paid, remove it from the list
+  const handlePaid = (orderId) => {
+    setOrders((prev) => prev.filter((o) => o.id !== orderId));
+  };
+
+  // Show only orders with outstanding balance (paid orders are "done")
+  const unpaidOrders = orders.filter((o) => (o.balance || 0) > 0);
+  const paidOrders = orders.filter((o) => (o.balance || 0) === 0);
 
   return (
-    <PageContainer title="Orders">
+    <PageContainer title={t("orders.title")}>
       <div className="space-y-3">
         {loading &&
           skeletons.map((_, idx) => (
             <Skeleton key={idx} className="h-24 w-full rounded-2xl" />
           ))}
 
-        {!loading && orders.length === 0 && (
+        {!loading && unpaidOrders.length === 0 && paidOrders.length === 0 && (
           <EmptyState
-            title="No orders yet"
-            description="New orders will appear here as you create them from the New Order screen."
+            title={t("orders.emptyTitle")}
+            description={t("orders.emptyDesc")}
           />
         )}
 
-        {!loading &&
-          orders.map((order) => <OrderCard key={order.id} order={order} />)}
+        {/* Pending (unpaid) orders */}
+        <AnimatePresence mode="popLayout">
+          {!loading &&
+            unpaidOrders.map((order) => (
+              <OrderCard key={order.id} order={order} onPaid={handlePaid} />
+            ))}
+        </AnimatePresence>
+
+        {/* Paid orders shown at bottom, collapsed/dimmed */}
+        {!loading && paidOrders.length > 0 && (
+          <div>
+            <p className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              ✓ Paid
+            </p>
+            <AnimatePresence>
+              {paidOrders.map((order) => (
+                <OrderCard key={order.id} order={order} onPaid={handlePaid} />
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
     </PageContainer>
   );
 };
 
 export default Orders;
-

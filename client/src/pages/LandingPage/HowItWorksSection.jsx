@@ -6,17 +6,17 @@ const steps = [
   {
     icon: HiOutlineClipboardDocumentList,
     title: "Capture every order",
-    description: "Record orders in seconds with clear details, delivery dates, and photos."
+    description: "Simply jot down what your customer needs, set a delivery date, and add reference photos effortlessly."
   },
   {
     icon: HiOutlineUserGroup,
     title: "Know every customer",
-    description: "See lifetime value, pending balances, and recent activity per customer."
+    description: "Gain clear insights into who your best customers are and keep track of their outstanding balances instantly."
   },
   {
     icon: HiOutlineCurrencyRupee,
     title: "Close every payment",
-    description: "Track dues and follow up before payments slip through the cracks."
+    description: "Never worry about forgetting dues. Mark payments as resolved and rely on automated daily WhatsApp summaries."
   }
 ];
 
@@ -32,10 +32,10 @@ const HowItWorksSection = () => {
           className="text-center"
         >
           <h2 className="text-2xl font-semibold tracking-tight text-slate-900">
-            How Store Pilot fits your day.
+            How Vyapari AI helps you.
           </h2>
           <p className="mt-2 text-sm text-slate-600">
-            A simple three-step loop that repeats with every customer.
+            A natural extension of the way you already interact with your customers.
           </p>
         </motion.div>
 

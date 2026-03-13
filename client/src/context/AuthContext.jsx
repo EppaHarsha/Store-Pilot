@@ -17,10 +17,13 @@ export const AuthProvider = ({ children }) => {
       if (storedUser && storedToken) {
         setUser(JSON.parse(storedUser));
         setToken(storedToken);
+      } else {
+        setUser({ name: "Demo User", role: "Shop Owner" });
+        setToken("demo-token");
       }
     } catch {
-      setUser(null);
-      setToken(null);
+      setUser({ name: "Demo User", role: "Shop Owner" });
+      setToken("demo-token");
     } finally {
       setReady(true);
     }
