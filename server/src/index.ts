@@ -5,7 +5,9 @@ import express, { type ErrorRequestHandler } from "express";
 import morgan from "morgan";
 
 import { connectDB } from "./config/db.js";
+import { startDailySummaryJob } from "./jobs/dailySummary.js";
 import authRoutes from "./routes/authRoutes.js";
+import demoRoutes from "./routes/demoRoutes.js";
 
 const PORT = Number(process.env.PORT ?? 3001);
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ?? "http://localhost:5173";
@@ -37,6 +39,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/demo", demoRoutes);
 
 app.use("/api", (_req, res) => {
   res.status(404).json({ error: "Not found" });
@@ -58,6 +61,8 @@ app.use(errorHandler);
 async function start(): Promise<void> {
   try {
     await connectDB();
+
+    startDailySummaryJob();
 
     app.listen(PORT, () => {
       console.log(`Server listening on http://localhost:${PORT}`);
